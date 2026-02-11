@@ -10,9 +10,9 @@ A read-only MCP (Model Context Protocol) server wrapping the [robin-stocks](http
 - **Lazy authentication**: Authenticates on first tool call, not at startup
 - **Session caching**: Persists sessions to disk via robin-stocks pickle files for faster reconnects
 
-## Quick Start (no clone needed)
+## Quick Start
 
-Add to your MCP client config (e.g. `mcp.json` or Claude Desktop settings):
+Add to your MCP client config:
 
 ```json
 {
