@@ -1,4 +1,3 @@
-import pytest
 from robin_stocks_mcp.models.market import Quote, Candle
 from robin_stocks_mcp.models.base import coerce_numeric, coerce_timestamp, coerce_int
 
@@ -38,7 +37,7 @@ def test_quote_accepts_string_prices():
         last_price="150.50",
         bid="150.45",
         ask="150.55",
-        timestamp="2026-02-11T10:00:00Z"
+        timestamp="2026-02-11T10:00:00Z",
     )
     assert quote.last_price == 150.50
     assert isinstance(quote.last_price, float)
@@ -51,7 +50,7 @@ def test_candle_accepts_string_values():
         high="151.0",
         low="149.0",
         close="150.5",
-        volume="1000000"
+        volume="1000000",
     )
     assert candle.volume == 1000000
     assert isinstance(candle.volume, int)
@@ -65,7 +64,7 @@ def test_quote_accepts_none_values():
         last_price="150.50",
         bid=None,
         ask=None,
-        timestamp="2026-02-11T10:00:00Z"
+        timestamp="2026-02-11T10:00:00Z",
     )
     assert quote.bid is None
     assert quote.ask is None
@@ -90,10 +89,6 @@ def test_coerce_timestamp_with_invalid_string():
 
 
 def test_quote_accepts_integer_prices():
-    quote = Quote(
-        symbol="AAPL",
-        last_price=150,
-        timestamp="2026-02-11T10:00:00Z"
-    )
+    quote = Quote(symbol="AAPL", last_price=150, timestamp="2026-02-11T10:00:00Z")
     assert quote.last_price == 150.0
     assert isinstance(quote.last_price, float)
