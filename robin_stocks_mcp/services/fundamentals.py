@@ -22,7 +22,10 @@ class FundamentalsService:
         try:
             data = rh.get_fundamentals(symbol)
             
-            if isinstance(data, list) and len(data) > 0:
+            if isinstance(data, list):
+                if len(data) == 0:
+                    # Return empty fundamentals for invalid symbols
+                    return Fundamentals()
                 data = data[0]
             
             return Fundamentals(
