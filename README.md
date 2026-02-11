@@ -10,15 +10,7 @@ A read-only MCP (Model Context Protocol) server wrapping the [robin-stocks](http
 - **Lazy authentication**: Authenticates on first tool call, not at startup
 - **Session caching**: Persists sessions to disk via robin-stocks pickle files for faster reconnects
 
-## Installation
-
-```bash
-git clone https://github.com/ach968/robin-stocks-mcp.git
-cd robin-stocks-mcp
-pip install -e ".[dev]"
-```
-
-## Configuration (mcp.json)
+## Quick Start (no clone needed)
 
 Add to your MCP client config (e.g. `mcp.json` or Claude Desktop settings):
 
@@ -26,9 +18,31 @@ Add to your MCP client config (e.g. `mcp.json` or Claude Desktop settings):
 {
   "mcpServers": {
     "robinhood": {
-      "command": "python",
+      "command": "uvx",
       "args": [
-        "-m", "robin_stocks_mcp",
+        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "robinhood-mcp",
+        "--username", "your_robinhood_username",
+        "--password", "your_robinhood_password"
+      ]
+    }
+  }
+}
+```
+
+This uses [`uvx`](https://docs.astral.sh/uv/concepts/tools/) to run the server
+directly from GitHub without cloning or installing anything manually.
+
+### With session caching
+
+```json
+{
+  "mcpServers": {
+    "robinhood": {
+      "command": "uvx",
+      "args": [
+        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "robinhood-mcp",
         "--username", "your_robinhood_username",
         "--password", "your_robinhood_password",
         "--session-path", "/path/to/session/directory"
@@ -37,6 +51,9 @@ Add to your MCP client config (e.g. `mcp.json` or Claude Desktop settings):
   }
 }
 ```
+
+> **Note:** `--session-path` specifies a **directory** where robin-stocks stores its
+> `robinhood.pickle` session file, not a file path.
 
 ### CLI Arguments
 
@@ -48,39 +65,32 @@ Add to your MCP client config (e.g. `mcp.json` or Claude Desktop settings):
 | `--allow-mfa` | `RH_ALLOW_MFA=1` | Enable MFA code fallback (off by default) |
 
 CLI args take priority over environment variables. You can also pass credentials
-via the `env` block in `mcp.json` if you prefer:
+via the `env` block in `mcp.json` instead of args:
 
 ```json
 {
   "mcpServers": {
     "robinhood": {
-      "command": "python",
-      "args": ["-m", "robin_stocks_mcp"],
+      "command": "uvx",
+      "args": [
+        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "robinhood-mcp"
+      ],
       "env": {
         "RH_USERNAME": "your_username",
-        "RH_PASSWORD": "your_password",
-        "RH_SESSION_PATH": "/path/to/session/directory"
+        "RH_PASSWORD": "your_password"
       }
     }
   }
 }
 ```
 
-> **Note:** `--session-path` specifies a **directory** where robin-stocks stores its
-> `robinhood.pickle` session file, not a file path.
-
-## Usage
-
-Run the server directly:
+## Installation (for development)
 
 ```bash
-python -m robin_stocks_mcp --username myuser --password mypass
-```
-
-Or via the installed entry point:
-
-```bash
-robinhood-mcp --username myuser --password mypass
+git clone https://github.com/ach968/robin-stocks-mcp.git
+cd robin-stocks-mcp
+pip install -e ".[dev]"
 ```
 
 ## Available Tools
