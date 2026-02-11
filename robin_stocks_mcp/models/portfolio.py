@@ -20,7 +20,7 @@ class Position(BaseModel):
     symbol: str
     quantity: float
     average_cost: float
-    market_value: float
+    market_value: Optional[float] = None
     unrealized_pl: Optional[float] = None
 
     @field_validator('average_cost', 'market_value', 'unrealized_pl', mode='before')
