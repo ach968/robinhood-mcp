@@ -10,7 +10,7 @@ class Fundamentals(BaseModel):
     week_52_high: Optional[float] = None
     week_52_low: Optional[float] = None
 
-    @field_validator('*', mode='before')
+    @field_validator("*", mode="before")
     @classmethod
     def validate_numeric(cls, v):
         return coerce_numeric(v)

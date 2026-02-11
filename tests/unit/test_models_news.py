@@ -8,6 +8,6 @@ def test_news_item_creation():
         summary="Summary here",
         source="TechCrunch",
         url="https://techcrunch.com/article",
-        published_at="2026-02-11T10:00:00Z"
+        published_at="2026-02-11T10:00:00Z",
     )
     assert item.headline == "Apple releases new product"

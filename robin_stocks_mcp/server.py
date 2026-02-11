@@ -3,7 +3,7 @@
 
 import asyncio
 import json
-from typing import List, Optional
+from typing import List
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
@@ -11,7 +11,6 @@ from mcp.types import Tool, TextContent
 
 from robin_stocks_mcp.robinhood.client import RobinhoodClient
 from robin_stocks_mcp.robinhood.errors import (
-    RobinhoodError,
     AuthRequiredError,
     InvalidArgumentError,
     RobinhoodAPIError,
@@ -52,11 +51,11 @@ async def list_tools() -> List[Tool]:
                     "symbols": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "List of stock symbols (e.g., ['AAPL', 'GOOGL'])"
+                        "description": "List of stock symbols (e.g., ['AAPL', 'GOOGL'])",
                     }
                 },
-                "required": ["symbols"]
-            }
+                "required": ["symbols"],
+            },
         ),
         Tool(
             name="robinhood.market.price_history",
@@ -66,29 +65,37 @@ async def list_tools() -> List[Tool]:
                 "properties": {
                     "symbol": {
                         "type": "string",
-                        "description": "Stock symbol (e.g., 'AAPL')"
+                        "description": "Stock symbol (e.g., 'AAPL')",
                     },
                     "interval": {
                         "type": "string",
                         "enum": ["5minute", "10minute", "hour", "day", "week"],
                         "description": "Data interval",
-                        "default": "day"
+                        "default": "day",
                     },
                     "span": {
                         "type": "string",
-                        "enum": ["day", "week", "month", "3month", "year", "5year", "all"],
+                        "enum": [
+                            "day",
+                            "week",
+                            "month",
+                            "3month",
+                            "year",
+                            "5year",
+                            "all",
+                        ],
                         "description": "Time span",
-                        "default": "year"
+                        "default": "year",
                     },
                     "bounds": {
                         "type": "string",
                         "enum": ["extended", "trading", "regular", "24_7"],
                         "description": "Trading bounds",
-                        "default": "regular"
-                    }
+                        "default": "regular",
+                    },
                 },
-                "required": ["symbol"]
-            }
+                "required": ["symbol"],
+            },
         ),
         Tool(
             name="robinhood.market.quote",
@@ -99,11 +106,11 @@ async def list_tools() -> List[Tool]:
                     "symbols": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "List of stock symbols"
+                        "description": "List of stock symbols",
                     }
                 },
-                "required": ["symbols"]
-            }
+                "required": ["symbols"],
+            },
         ),
         Tool(
             name="robinhood.options.chain",
@@ -111,25 +118,19 @@ async def list_tools() -> List[Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "symbol": {
-                        "type": "string",
-                        "description": "Stock symbol"
-                    },
+                    "symbol": {"type": "string", "description": "Stock symbol"},
                     "expiration_date": {
                         "type": "string",
                         "description": "Expiration date (YYYY-MM-DD). If not provided, uses nearest expiration.",
-                    }
+                    },
                 },
-                "required": ["symbol"]
-            }
+                "required": ["symbol"],
+            },
         ),
         Tool(
             name="robinhood.portfolio.summary",
             description="Get portfolio summary",
-            inputSchema={
-                "type": "object",
-                "properties": {}
-            }
+            inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="robinhood.portfolio.positions",
@@ -140,18 +141,15 @@ async def list_tools() -> List[Tool]:
                     "symbols": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Optional filter by symbols"
+                        "description": "Optional filter by symbols",
                     }
-                }
-            }
+                },
+            },
         ),
         Tool(
             name="robinhood.watchlists.list",
             description="Get watchlists",
-            inputSchema={
-                "type": "object",
-                "properties": {}
-            }
+            inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="robinhood.news.latest",
@@ -161,10 +159,10 @@ async def list_tools() -> List[Tool]:
                 "properties": {
                     "symbol": {
                         "type": "string",
-                        "description": "Optional symbol to filter news"
+                        "description": "Optional symbol to filter news",
                     }
-                }
-            }
+                },
+            },
         ),
         Tool(
             name="robinhood.fundamentals.get",
@@ -172,21 +170,15 @@ async def list_tools() -> List[Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "symbol": {
-                        "type": "string",
-                        "description": "Stock symbol"
-                    }
+                    "symbol": {"type": "string", "description": "Stock symbol"}
                 },
-                "required": ["symbol"]
-            }
+                "required": ["symbol"],
+            },
         ),
         Tool(
             name="robinhood.auth.status",
             description="Check authentication status",
-            inputSchema={
-                "type": "object",
-                "properties": {}
-            }
+            inputSchema={"type": "object", "properties": {}},
         ),
     ]
 
@@ -198,80 +190,135 @@ async def call_tool(name: str, arguments: dict) -> List[TextContent]:
         if name == "robinhood.market.current_price":
             symbols = arguments.get("symbols", [])
             quotes = market_service.get_current_price(symbols)
-            return [TextContent(type="text", text=json.dumps([q.model_dump() for q in quotes]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([q.model_dump() for q in quotes])
+                )
+            ]
+
         elif name == "robinhood.market.price_history":
             symbol = arguments.get("symbol")
             interval = arguments.get("interval", "day")
             span = arguments.get("span", "year")
             bounds = arguments.get("bounds", "regular")
             candles = market_service.get_price_history(symbol, interval, span, bounds)
-            return [TextContent(type="text", text=json.dumps([c.model_dump() for c in candles]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([c.model_dump() for c in candles])
+                )
+            ]
+
         elif name == "robinhood.market.quote":
             symbols = arguments.get("symbols", [])
-            quotes = market_service.get_current_price(symbols)  # Same as current_price for now
-            return [TextContent(type="text", text=json.dumps([q.model_dump() for q in quotes]))]
-        
+            quotes = market_service.get_current_price(
+                symbols
+            )  # Same as current_price for now
+            return [
+                TextContent(
+                    type="text", text=json.dumps([q.model_dump() for q in quotes])
+                )
+            ]
+
         elif name == "robinhood.options.chain":
             symbol = arguments.get("symbol")
             expiration_date = arguments.get("expiration_date")
             contracts = options_service.get_options_chain(symbol, expiration_date)
-            return [TextContent(type="text", text=json.dumps([c.model_dump() for c in contracts]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([c.model_dump() for c in contracts])
+                )
+            ]
+
         elif name == "robinhood.portfolio.summary":
             summary = portfolio_service.get_portfolio_summary()
             return [TextContent(type="text", text=json.dumps(summary.model_dump()))]
-        
+
         elif name == "robinhood.portfolio.positions":
             symbols = arguments.get("symbols")
             positions = portfolio_service.get_positions(symbols)
-            return [TextContent(type="text", text=json.dumps([p.model_dump() for p in positions]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([p.model_dump() for p in positions])
+                )
+            ]
+
         elif name == "robinhood.watchlists.list":
             watchlists = watchlists_service.get_watchlists()
-            return [TextContent(type="text", text=json.dumps([w.model_dump() for w in watchlists]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([w.model_dump() for w in watchlists])
+                )
+            ]
+
         elif name == "robinhood.news.latest":
             symbol = arguments.get("symbol")
             news = news_service.get_news(symbol)
-            return [TextContent(type="text", text=json.dumps([n.model_dump() for n in news]))]
-        
+            return [
+                TextContent(
+                    type="text", text=json.dumps([n.model_dump() for n in news])
+                )
+            ]
+
         elif name == "robinhood.fundamentals.get":
             symbol = arguments.get("symbol")
             fundamentals = fundamentals_service.get_fundamentals(symbol)
-            return [TextContent(type="text", text=json.dumps(fundamentals.model_dump()))]
-        
+            return [
+                TextContent(type="text", text=json.dumps(fundamentals.model_dump()))
+            ]
+
         elif name == "robinhood.auth.status":
             try:
                 client.ensure_session()
-                return [TextContent(type="text", text=json.dumps({"authenticated": True}))]
+                return [
+                    TextContent(type="text", text=json.dumps({"authenticated": True}))
+                ]
             except AuthRequiredError:
-                return [TextContent(type="text", text=json.dumps({"authenticated": False, "error": "Authentication required"}))]
-        
+                return [
+                    TextContent(
+                        type="text",
+                        text=json.dumps(
+                            {"authenticated": False, "error": "Authentication required"}
+                        ),
+                    )
+                ]
+
         else:
-            return [TextContent(type="text", text=json.dumps({"error": f"Unknown tool: {name}"}))]
-    
+            return [
+                TextContent(
+                    type="text", text=json.dumps({"error": f"Unknown tool: {name}"})
+                )
+            ]
+
     except AuthRequiredError as e:
-        return [TextContent(type="text", text=json.dumps({"error": f"AUTH_REQUIRED: {e}"}))]
+        return [
+            TextContent(type="text", text=json.dumps({"error": f"AUTH_REQUIRED: {e}"}))
+        ]
     except InvalidArgumentError as e:
-        return [TextContent(type="text", text=json.dumps({"error": f"INVALID_ARGUMENT: {e}"}))]
+        return [
+            TextContent(
+                type="text", text=json.dumps({"error": f"INVALID_ARGUMENT: {e}"})
+            )
+        ]
     except RobinhoodAPIError as e:
-        return [TextContent(type="text", text=json.dumps({"error": f"ROBINHOOD_ERROR: {e}"}))]
+        return [
+            TextContent(
+                type="text", text=json.dumps({"error": f"ROBINHOOD_ERROR: {e}"})
+            )
+        ]
     except NetworkError as e:
-        return [TextContent(type="text", text=json.dumps({"error": f"NETWORK_ERROR: {e}"}))]
+        return [
+            TextContent(type="text", text=json.dumps({"error": f"NETWORK_ERROR: {e}"}))
+        ]
     except Exception as e:
-        return [TextContent(type="text", text=json.dumps({"error": f"INTERNAL_ERROR: {e}"}))]
+        return [
+            TextContent(type="text", text=json.dumps({"error": f"INTERNAL_ERROR: {e}"}))
+        ]
 
 
 async def main():
     """Run the MCP server."""
     async with stdio_server() as (read_stream, write_stream):
-        await mcp.run(
-            read_stream,
-            write_stream,
-            mcp.create_initialization_options()
-        )
+        await mcp.run(read_stream, write_stream, mcp.create_initialization_options())
 
 
 if __name__ == "__main__":

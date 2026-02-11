@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
@@ -9,9 +8,9 @@ def coerce_timestamp(ts: Optional[str]) -> Optional[str]:
         return None
     # Parse and re-format to ensure consistency
     try:
-        dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
-        return dt.isoformat().replace('+00:00', 'Z')
-    except:
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        return dt.isoformat().replace("+00:00", "Z")
+    except (ValueError, TypeError):
         return ts
 
 

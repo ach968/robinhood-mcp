@@ -13,9 +13,7 @@ class OptionsService:
         self.client = client
 
     def get_options_chain(
-        self,
-        symbol: str,
-        expiration_date: Optional[str] = None
+        self, symbol: str, expiration_date: Optional[str] = None
     ) -> List[OptionContract]:
         """Get options chain for a symbol."""
         if not symbol:
@@ -29,7 +27,7 @@ class OptionsService:
                 expirations = [expiration_date]
             else:
                 chains = rh.get_chains(symbol)
-                expirations = chains.get('expiration_dates', [])
+                expirations = chains.get("expiration_dates", [])
                 if not expirations:
                     return []
                 # Use nearest expiration
@@ -37,21 +35,18 @@ class OptionsService:
 
             contracts = []
             for exp in expirations:
-                options_data = rh.find_options_by_expiration(
-                    symbol,
-                    expirationDate=exp
-                )
+                options_data = rh.find_options_by_expiration(symbol, expirationDate=exp)
 
                 for item in options_data:
                     contract = OptionContract(
-                        symbol=item.get('chain_symbol', symbol),
+                        symbol=item.get("chain_symbol", symbol),
                         expiration=exp,
-                        strike=item.get('strike_price'),
-                        type='call' if item.get('type') == 'call' else 'put',
-                        bid=item.get('bid_price'),
-                        ask=item.get('ask_price'),
-                        open_interest=item.get('open_interest'),
-                        volume=item.get('volume')
+                        strike=item.get("strike_price"),
+                        type="call" if item.get("type") == "call" else "put",
+                        bid=item.get("bid_price"),
+                        ask=item.get("ask_price"),
+                        open_interest=item.get("open_interest"),
+                        volume=item.get("volume"),
                     )
                     contracts.append(contract)
 

@@ -11,7 +11,7 @@ class NewsItem(BaseModel):
     url: Optional[str] = None
     published_at: str
 
-    @field_validator('published_at', mode='before')
+    @field_validator("published_at", mode="before")
     @classmethod
     def validate_timestamp(cls, v):
         return coerce_timestamp(v)
