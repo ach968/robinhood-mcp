@@ -12,19 +12,22 @@ A read-only MCP (Model Context Protocol) server wrapping the [robin-stocks](http
 
 ## Quick Start
 
-Add to your MCP client config:
+Add to your OpenCode config (`~/.config/opencode/opencode.json` or project-level `opencode.json`):
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "robinhood": {
-      "command": "uvx",
-      "args": [
+      "type": "local",
+      "command": [
+        "uvx",
         "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
         "robinhood-mcp",
         "--username", "your_robinhood_username",
         "--password", "your_robinhood_password"
-      ]
+      ],
+      "enabled": true
     }
   }
 }
@@ -37,16 +40,19 @@ directly from GitHub without cloning or installing anything manually.
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "robinhood": {
-      "command": "uvx",
-      "args": [
+      "type": "local",
+      "command": [
+        "uvx",
         "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
         "robinhood-mcp",
         "--username", "your_robinhood_username",
         "--password", "your_robinhood_password",
         "--session-path", "/path/to/session/directory"
-      ]
+      ],
+      "enabled": true
     }
   }
 }
@@ -65,21 +71,24 @@ directly from GitHub without cloning or installing anything manually.
 | `--allow-mfa` | `RH_ALLOW_MFA=1` | Enable MFA code fallback (off by default) |
 
 CLI args take priority over environment variables. You can also pass credentials
-via the `env` block in `mcp.json` instead of args:
+via the `environment` block instead of inline args:
 
 ```json
 {
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "robinhood": {
-      "command": "uvx",
-      "args": [
+      "type": "local",
+      "command": [
+        "uvx",
         "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
         "robinhood-mcp"
       ],
-      "env": {
+      "environment": {
         "RH_USERNAME": "your_username",
         "RH_PASSWORD": "your_password"
-      }
+      },
+      "enabled": true
     }
   }
 }
