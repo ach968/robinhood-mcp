@@ -22,7 +22,7 @@ Add to your OpenCode config (`~/.config/opencode/opencode.json` or project-level
       "type": "local",
       "command": [
         "uvx",
-        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "--from", "git+https://github.com/ach968/robinhood-mcp.git",
         "robinhood-mcp",
         "--username", "your_robinhood_username",
         "--password", "your_robinhood_password"
@@ -46,7 +46,7 @@ directly from GitHub without cloning or installing anything manually.
       "type": "local",
       "command": [
         "uvx",
-        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "--from", "git+https://github.com/ach968/robinhood-mcp.git",
         "robinhood-mcp",
         "--username", "your_robinhood_username",
         "--password", "your_robinhood_password",
@@ -81,7 +81,7 @@ via the `environment` block instead of inline args:
       "type": "local",
       "command": [
         "uvx",
-        "--from", "git+https://github.com/ach968/robin-stocks-mcp.git",
+        "--from", "git+https://github.com/ach968/robinhood-mcp.git",
         "robinhood-mcp"
       ],
       "environment": {
@@ -97,8 +97,8 @@ via the `environment` block instead of inline args:
 ## Installation (for development)
 
 ```bash
-git clone https://github.com/ach968/robin-stocks-mcp.git
-cd robin-stocks-mcp
+git clone https://github.com/ach968/robinhood-mcp.git
+cd robinhood-mcp
 pip install -e ".[dev]"
 ```
 
