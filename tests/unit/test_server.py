@@ -34,12 +34,17 @@ def test_parse_args_defaults():
 def test_parse_args_with_values():
     from robin_stocks_mcp.server import parse_args
 
-    args = parse_args([
-        "--username", "myuser",
-        "--password", "mypass",
-        "--session-path", "/tmp/session.json",
-        "--allow-mfa",
-    ])
+    args = parse_args(
+        [
+            "--username",
+            "myuser",
+            "--password",
+            "mypass",
+            "--session-path",
+            "/tmp/session.json",
+            "--allow-mfa",
+        ]
+    )
     assert args.username == "myuser"
     assert args.password == "mypass"
     assert args.session_path == "/tmp/session.json"
@@ -83,7 +88,7 @@ async def test_list_tools_returns_tools():
     from robin_stocks_mcp.server import list_tools
 
     tools = await list_tools()
-    assert len(tools) == 10
+    assert len(tools) == 11
 
     tool_names = [tool.name for tool in tools]
     expected_tools = [
@@ -96,6 +101,7 @@ async def test_list_tools_returns_tools():
         "robinhood.watchlists.list",
         "robinhood.news.latest",
         "robinhood.fundamentals.get",
+        "robinhood.earnings.get",
         "robinhood.auth.status",
     ]
     for expected in expected_tools:
