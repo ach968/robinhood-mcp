@@ -16,8 +16,8 @@ A monorepo providing CLI and MCP access to the [robin-stocks](https://github.com
 
 ```bash
 # Clone and install globally
-git clone https://github.com/ach968/robinhood-mcp.git
-cd robinhood-mcp
+git clone https://github.com/ach968/robinhood-tools.git
+cd robinhood-tools
 uv tool install ./robinhood-cli
 
 # Login (prompts for username/password)
@@ -51,7 +51,7 @@ Add to your OpenCode config (`~/.config/opencode/opencode.json`):
       "type": "local",
       "command": [
         "uvx",
-        "--from", "git+https://github.com/ach968/robinhood-mcp.git",
+        "--from", "git+https://github.com/ach968/robinhood-tools.git",
         "robinhood-mcp",
         "--username", "your_username",
         "--password", "your_password"
@@ -68,8 +68,8 @@ See [robinhood-mcp/README.md](robinhood-mcp/README.md) for full MCP documentatio
 
 ```bash
 # Clone
-git clone https://github.com/ach968/robinhood-mcp.git
-cd robinhood-mcp
+git clone https://github.com/ach968/robinhood-tools.git
+cd robinhood-tools
 
 # Install all packages
 cd robinhood-core && uv pip install -e ".[dev]"
@@ -147,6 +147,18 @@ robinhood-mcp/            # MCP server
 - CLI stores session tokens in `~/.config/robinhood/` (pickle file + config)
 - MCP accepts credentials via CLI args or environment variables
 - Passwords and tokens are never logged
+
+## Pi Agent Skill
+
+A skill for the [pi coding agent](https://github.com/badlogic/pi-coding-agent) is included at [`skills/rh-cli.md`](skills/rh-cli.md). 
+
+To use it, copy to your pi skills directory:
+```bash
+mkdir -p ~/.pi/agent/skills/rh-cli
+cp skills/rh-cli.md ~/.pi/agent/skills/rh-cli/SKILL.md
+```
+
+After installing, pi will automatically suggest using `rh` commands when you ask about Robinhood data.
 
 ## Disclaimer
 
