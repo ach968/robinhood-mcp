@@ -78,7 +78,8 @@ class RobinhoodClient:
 
             logger.warning("Authentication failed: missing credentials")
             raise AuthRequiredError(
-                "Not logged in. Run 'rh login' to authenticate."
+                "Session expired or corrupted. Run 'rh login' to re-authenticate, "
+                "or set RH_USERNAME and RH_PASSWORD environment variables."
             )
 
         try:

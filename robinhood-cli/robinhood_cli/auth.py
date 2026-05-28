@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -56,8 +57,10 @@ def get_client(session_dir: Path = DEFAULT_SESSION_DIR) -> RobinhoodClient:
 def login_command() -> None:
     """Authenticate with Robinhood and save a session."""
     console.print("[bold]Robinhood Login[/bold]")
-    username = typer.prompt("Username")
-    password = typer.prompt("Password", hide_input=True)
+    
+    # Use env vars if available, otherwise prompt
+    username = os.getenv("RH_USERNAME") or typer.prompt("Username")
+    password = os.getenv("RH_PASSWORD") or typer.prompt("Password", hide_input=True)
 
     DEFAULT_SESSION_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -104,7 +107,7 @@ def logout_command() -> None:
 
 
 def status_command() -> None:
-    """Show authentication status."""
+    """Show authentication status with actual session validation."""
     config = load_config()
     if config is None:
         console.print("[yellow]Not logged in.[/yellow] Run [bold]rh login[/bold].")
@@ -112,8 +115,20 @@ def status_command() -> None:
 
     username = config.get("username", "unknown")
     pickle_path = DEFAULT_SESSION_DIR / "robinhood.pickle"
-    console.print(f"Logged in as [bold]{username}[/bold]")
-    console.print(f"Session file: {pickle_path}")
-    console.print(
-        f"  Exists: {'[green]yes[/green]' if pickle_path.exists() else '[red]no[/red]'}"
-    )
+    
+    if not pickle_path.exists():
+        console.print(f"[yellow]Session file missing.[/yellow] Run [bold]rh login[/bold].")
+        return
+
+    # Actually validate the session by attempting to restore it
+    client = RobinhoodClient(session_path=str(DEFAULT_SESSION_DIR))
+    try:
+        client.ensure_session()
+        console.print(f"Logged in as [bold]{username}[/bold]")
+        console.print(f"Session file: {pickle_path}")
+        console.print(f"  Status: [green]valid[/green]")
+    except AuthRequiredError:
+        console.print(f"[yellow]Session expired for[/yellow] [bold]{username}[/bold]")
+        console.print(f"Session file: {pickle_path}")
+        console.print(f"  Status: [red]expired/invalid[/red]")
+        console.print(f"Run [bold]rh login[/bold] to re-authenticate.")
