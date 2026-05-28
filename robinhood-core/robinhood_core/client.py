@@ -1,4 +1,5 @@
 # robin_stocks_mcp/robinhood/client.py
+import contextlib
 import logging
 import os
 from typing import Optional
@@ -65,10 +66,13 @@ class RobinhoodClient:
             if self._session_path:
                 try:
                     logger.debug("No credentials provided, trying saved session at %s", self._session_path)
-                    login_result = rh.login(
-                        pickle_path=self._session_path,
-                        store_session=True,
-                    )
+                    # Suppress robin_stocks' unconditional "Starting login process..." print
+                    # when we are just restoring a cached session.
+                    with contextlib.redirect_stdout(open(os.devnull, "w")):
+                        login_result = rh.login(
+                            pickle_path=self._session_path,
+                            store_session=True,
+                        )
                     if login_result:
                         self._authenticated = True
                         logger.info("Restored session from saved pickle")
